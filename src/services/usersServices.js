@@ -1,4 +1,4 @@
-import { userEndpoint, requestsHeader, profileEndpoint, userEditProfileEndpoint, photoUploadEndpoint, registerEndpoint, loginEndpoint } from "../shared/constants";
+import { userEndpoint, profileEndpoint, userEditProfileEndpoint, registerEndpoint, loginEndpoint } from "../shared/constants";
 import { get, post, put } from "./APIService";
 import { User } from "../entities/User";
 
@@ -7,51 +7,24 @@ class UsersServices {
     fetchSingleUser(userId) {
         const urlUserEndpoint = (`${userEndpoint}/${userId}`);
         return get(urlUserEndpoint)
-            .then(user => {
-                return new User(user.userId, user.name, user.email, user.aboutShort, user.about, user.avatarUrl, user.postsCount, user.commentsCount)
-            })
-            .catch(error => {
-                console.error(error);
-                alert('No user to show.')
-            })
+            .then(user => mapUser(user));
     }
 
     fetchUsers() {
         return get(userEndpoint)
-            .then(users => {
-                return users.map(user => {
-                    return new User(user.id, user.name, "", user.aboutShort, "", user.avatarUrl, "", "", user.lastPostDate)
-                })
-            })
-            .catch(error => {
-                console.error(error);
-                alert('No user to show.')
-            })
+            .then(users => mapUsers(users));
         }
 
     fetchProfile() {
         return get(profileEndpoint)
-            .then(profile => {
-                return new User(profile.userId, profile.name, profile.email, profile.aboutShort, profile.about, profile.avatarUrl, profile.postsCount, profile.commentsCount)
-            })
-            .catch(error => {
-                console.error(error);
-                alert('No profile to show.')
-            })
-
+            .then(profile => mapUser(profile));
     }
 
-    registerUser = (newUser) => {
-        return post(registerEndpoint, newUser)
-    }
-
-    loginUser = (loginUser) => {
-        return post(loginEndpoint, loginUser)
-    }
-
-
+    registerUser = newUser => (post(registerEndpoint, newUser));
+    
+    loginUser = loginUser => (post(loginEndpoint, loginUser));
+    
     updateUserProfile(name, about, photo) {
-
         const updateData = {
             name: name,
             email: 'bitStudent@gmail.com',
@@ -61,11 +34,16 @@ class UsersServices {
             postsCount: 0,
             commentsCount: 0
         }
-
-        return put(userEditProfileEndpoint, updateData)
+        return put(userEditProfileEndpoint, updateData);
     }
-
 }
 
+const mapUsers = (users) => {
+    return users.map(user => new User (user.id, user.name, "", user.aboutShort, "", user.avatarUrl, "", ""));
+}
 
-export const usersServices = new UsersServices;
+const mapUser = (user) => {
+    return new User(user.userId, user.name, user.email, user.aboutShort, user.about, user.avatarUrl, user.postsCount, user.commentsCount);
+}
+
+export const usersServices = new UsersServices();

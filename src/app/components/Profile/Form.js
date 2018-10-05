@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { validationService } from '../../../services/validationService';
 import { uploadServices } from '../../../services/uploadServices';
 import '../../../css/profilePage.css';
+import PropTypes from 'prop-types';
 
 export class Form extends Component {
     constructor(props) {
@@ -15,27 +16,23 @@ export class Form extends Component {
             error: null,
             inputFileValue: null
         }
+        this.handleChange = this.handleChange.bind(this);
+        this.handlePhoto = this.handlePhoto.bind(this);
+        this.switchSourceUpload = this.switchSourceUpload.bind(this);
+        this.onImgFileChange = this.onImgFileChange.bind(this);
+        this.onImgFileUpload = this.onImgFileUpload.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
-    handleUsername = (event) => {
-        this.setState({
-            name: event.target.value
-        })
-    }
+    handleChange(e) { this.setState({ [e.target.name]: e.target.value }) };
 
-    handleAbout = (event) => {
+    handlePhoto(e) {
         this.setState({
-            about: event.target.value
-        })
-    }
-
-    handlePhoto = (event) => {
-        this.setState({
-            photo: event.target.value
-        })
+            photo: e.target.value
+        });
 
         this.setState({ error: null });
-        const valObj = validationService.validateImageForm(event.target.value)
+        const valObj = validationService.validateImageForm(e.target.value);
 
         if (valObj.error) {
             this.setState({ error: valObj.error });
@@ -43,60 +40,60 @@ export class Form extends Component {
         }
     }
 
-    switchSourceUpload = (event) => {
-        if (this.state.switchUpload) {
+    switchSourceUpload(e) {
+        const { switchUpload } = this.state;
+        const { avatarUrl } = this.props.profile;
+        if (switchUpload) {
             this.setState({
                 switchUpload: false,
                 photo: ''
-            })
-
+            });
         } else {
             this.setState({
                 switchUpload: true,
-                photo: this.props.profile.avatarUrl
-            })
+                photo: avatarUrl
+            });
         }
     }
 
-    onImgFileChange = (event) => {
-        this.setState({
-            inputFileValue: event.target.files[0]
-        })
-    }
+    onImgFileChange(e) { this.setState({ inputFileValue: e.target.files[0] }) };
 
-    onImgFileUpload = (event) => {
+    onImgFileUpload(e) {
         const imgFile = this.state.inputFileValue;
-
         return uploadServices.uploadUserPicture(imgFile)
             .then(photo => this.setState({ photo }));
     }
 
-    onSubmit = (event) => {
-        event.preventDefault();
-        this.props.updateUserProfile(this.state.name, this.state.about, this.state.photo);
-        this.props.handleClose(event);
+    onSubmit(e) {
+        e.preventDefault();
+        const { name, about, photo } = this.state;
+        const { updateUserProfile, handleClose } = this.props;
+        updateUserProfile(name, about, photo);
+        handleClose(e);
     }
 
     render() {
+        const { name, about, photo, switchUpload, error } = this.state;
+        const { aboutShort } = this.props.profile;
+
         return (
             <form>
                 <div> Username </div>
-                <input type="text" value={this.state.name} placeholder={this.props.profile.name} onChange={this.handleUsername} />
+                <input type="text" value={name} placeholder={this.props.profile.name} name="name" onChange={this.handleChange} />
                 <br />
                 <div> About </div>
-                <input type="text" value={this.state.about} placeholder={this.props.profile.aboutShort} onChange={this.handleAbout} />
+                <input type="text" value={about} placeholder={aboutShort} name="about" onChange={this.handleChange} />
                 <div className=" upload-photo"> Upload photo </div>
 
-                {this.state.switchUpload
-                    ? <input type="text" value={this.state.photo} placeholder="photo url" onChange={this.handlePhoto} />
+                {switchUpload
+                    ? <input type="text" value={photo} placeholder="photo url" name="about" onChange={this.handlePhoto} />
                     : <input type="file" onChange={this.onImgFileChange} />
                 }
 
                 <div className="switch type-upload">
-                    {/* <div> <img src={this.state.photo} className='preview-image' /> </div> */}
                     <label>
                         from url
-                        <input type="checkbox" value={this.state.switchUpload} onClick={this.switchSourceUpload} />
+                        <input type="checkbox" value={switchUpload} onClick={this.switchSourceUpload} />
                         <span className="lever"></span>
                         from file
                      </label>
@@ -106,11 +103,16 @@ export class Form extends Component {
                     <button className="modal-close waves-effect waves-green btn-flat comment-button " id="cancel" onClick={this.props.handleClose}>Cancel</button>
                     <button
                         className="modal-close waves-effect waves-green btn-flat comment-button" onClick={this.onSubmit}
-                        disabled={this.state.error || !this.state.photo}>
+                        disabled={error || !photo}>
                         Update
                         </button>
                 </div>
             </form>
         );
     }
+}
+Form.propTypes = {
+    profile: PropTypes.object.isRequired,
+    updateUserProfile: PropTypes.func.isRequired,
+    handleClose: PropTypes.func.isRequired
 }

@@ -1,36 +1,26 @@
-import React, { Fragment, Component } from 'react';
+import React from 'react';
 import { SingleUser } from "./SingleUserCard";
-import { SearchUsers } from "./SearchUsers";
-import {NoUser} from "./NoUser";
-import { Loader } from "../../partials/Loader"
+import { NoUser } from "./NoUser";
+import PropTypes from 'prop-types';
 
-export class UserList extends Component {
-    constructor(props) {
-        super(props);
-    };
-
-    renderUsers = () => {
-        const users = this.props.users;
+export const UserList = (props) => {
+ 
+    const renderUsers = () => {
+        const { users } = props;
         if (users.length > 0) {
-            return users.map((user, index) => {
-                return <SingleUser myUser={user} key={index} />
-            });
-        } else {
-           if (this.props.searchInputValue) {
-                return <NoUser />
-           }
-
-            return <Loader />
-        }
+            return users.map(user => <SingleUser myUser={user} key={user.userId} />);
+        } 
+        return <NoUser />
     };
 
-    render() {
-        return (
-            <div className="container">
-                <ul className="collection">
-                    {this.renderUsers()}
-                </ul>
-            </div>
-        )
-    }
+    return (
+        <div className="container">
+            <ul className="collection">
+                {renderUsers()}
+            </ul>
+        </div>
+    );
+}
+UserList.propTypes = {
+    users: PropTypes.arrayOf(PropTypes.object).isRequired
 }

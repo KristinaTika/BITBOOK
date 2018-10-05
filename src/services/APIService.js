@@ -1,5 +1,4 @@
-import { userEditProfileEndpoint, registerEndpoint } from '../shared/constants';
-
+import axios from 'axios';
 
 export const getHeaders = () => {
     let requestsHeader = {
@@ -16,18 +15,15 @@ export const getHeaders = () => {
 
 export const get = (url) => {
 
-    return fetch(url, {
+    return axios.get(url, {
         cache: 'no-cache',
         credentials: 'same-origin',
         headers: getHeaders(),
         method: 'GET',
         mode: 'cors'
     })
-        .then(response => {
-            return response.json()
-        })
+        .then(response => response.data);
 }
-
 
 export const post = (url, newContent) => {
 
@@ -37,27 +33,23 @@ export const post = (url, newContent) => {
         headers: getHeaders(),
         mode: 'cors'
     }
-    return fetch(url, postData)
-
+    return fetch(url, postData);
 }
 
 export const put = (url, data) => {
 
     return fetch(url, {
-
         method: 'PUT',
         body: JSON.stringify(data),
         headers: getHeaders(),
-    })
-
+    });
 }
 
 export const deleteData = (url) => {
 
-    return fetch(url, {
-
+    return axios(url, {
         method:'DELETE',
         headers: getHeaders()
-    })
+    });
 }
 

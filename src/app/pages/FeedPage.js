@@ -3,164 +3,145 @@ import { postsServices } from '../../services/postsServices';
 import { FeedList } from '../components/Feed/FeedList';
 import { CreatePostButton } from '../components/Feed/CreatePostButton';
 import { CreatePostModal } from "../components/Feed/CreatePostModal";
-import M from "materialize-css";
 import { TextPost } from '../../entities/Post';
 import { FilterPostsDropDown } from "../components/Feed/FilterPostsDropDown"
 import { usersServices } from '../../services/usersServices';
 
-
 export class FeedPage extends Component {
     constructor(props) {
         super(props);
-        this.state = ({
+        this.state = {
             posts: [],
             newPostType: '',
             filteredPosts: [],
             selectedPostFilter: "allPosts",
-            profile: null
-        })
+            profile: null,
+            error: ""
+        }
+        this.loadPosts = this.loadPosts.bind(this);
+        this.handlerPostType = this.handlerPostType.bind(this);
+        this.filterPosts = this.filterPosts.bind(this);
     }
 
     componentDidMount() {
         this.loadPosts();
-        // this.loadMyProfile();
     }
 
-    // loadMyProfile = () => {
-    //     usersServices.fetchProfile()
-    //         .then(profile => {
-    //             this.setState({
-    //                 profile: profile
-    //             });
-    //             console.log("feed" + this.state.profile)
-    //         })
-    // }
-
-    loadPosts = () => {
+    loadPosts() {
         postsServices.fetchPosts()
-            .then(data => {
+            .then(data => this.setState({
+                posts: data,
+                filteredPosts: data
+            }))
+            .catch(err => {
                 this.setState({
-                    posts: data,
-                    filteredPosts: data
-                })
-            })
-            .catch(message => {
-                console.log(message)
-                alert("Failed to load posts.")
+                    error: err.message,
+                });
             });
     }
 
-    handlerPostType = (event) => {
-        if (event.target.parentElement.getAttribute("data-target") === 'modalPost') {
+    handlerPostType(e) {
+        if (e.target.parentElement.name === 'modalPost') {
             this.setState({
                 newPostType: 'text'
             });
-        } else if (event.target.parentElement.getAttribute("data-target") === 'modalImage') {
+        } else if (e.target.parentElement.name === 'modalImage') {
             this.setState({
-                newPostType: 'imageUrl'
+                newPostType: 'image'
             });
-        } else if (event.target.parentElement.getAttribute("data-target") === 'modalVideo') {
+        } else if (e.target.parentElement.name === 'modalVideo') {
             this.setState({
-                newPostType: 'videoUrl'
+                newPostType: 'video'
             });
         }
     }
 
-    filterPosts = (event) => {    
-        if (event.target.value === 'text') {
-            const filteredPosts = this.state.posts.filter((post) => {
-                return post.type.includes('text');
-            })
+    filterPosts(e) {
+        const { posts } = this.state;
+        if (e.target.value === 'text') {
+            const filteredPosts = posts.filter(post => post.type.includes('text'));
             this.setState({
-                filteredPosts: filteredPosts,
-                selectedPostFilter: event.target.value
+                filteredPosts,
+                selectedPostFilter: e.target.value
             });
 
-        } else if (event.target.value === 'imageUrl') {
-            const filteredPosts = this.state.posts.filter((post) => {
-                return post.type.includes('image');
-            })
+        } else if (e.target.value === 'imageUrl') {
+            const filteredPosts = posts.filter(post => post.type.includes('image'));
             this.setState({
-                filteredPosts: filteredPosts,
-                selectedPostFilter: event.target.value
+                filteredPosts,
+                selectedPostFilter: e.target.value
             });
-            
-        } else if (event.target.value === 'videoUrl') {
-            const filteredPosts = this.state.posts.filter((post) => {
-                return post.type.includes('video');
-            })
-            this.setState({
-                filteredPosts: filteredPosts,
-                selectedPostFilter: event.target.value                
-            }); 
 
-        } else if (event.target.value === "allPosts") {
-            const filteredPosts = this.state.posts
+        } else if (e.target.value === 'videoUrl') {
+            const filteredPosts = posts.filter(post => post.type.includes('video'));
             this.setState({
-                filteredPosts: filteredPosts,
-                selectedPostFilter: event.target.value
-            })
+                filteredPosts,
+                selectedPostFilter: e.target.value
+            });
+
+        } else if (e.target.value === "allPosts") {
+            const filteredPosts = posts;
+            this.setState({
+                filteredPosts,
+                selectedPostFilter: e.target.value
+            });
         }
     }
 
-    handleSubmit = (postBodyContent) => {
-        let newPostPropertyType = this.state.newPostType;
-        const userId = localStorage.getItem('userId')
-        // console.log('localStorage' + userId)
+    handleSubmit = (inputValue) => {
+        let { newPostType } = this.state;
+        const userId = localStorage.getItem('userId');
         const newPost = {
-
             date: Date.now(),
             userId: userId,
             userDisplayName: "NoReturn",
-            type: this.state.newPostType,
+            type: newPostType,
             numOfComments: 0,
+        }
+    
+        if (newPostType === "text") {
+            newPost["text"] = inputValue;
 
+        } else if (newPostType === "image") {
+            newPost["imageUrl"] = inputValue;
+
+        } else if (newPostType === "video") {
+            newPost["videoUrl"] = inputValue.replace("watch?v=", "embed/");
         }
 
-        if (newPostPropertyType === "text") {
-            newPost["text"] = postBodyContent;
-
-        } else if (newPostPropertyType === "imageUrl") {
-            newPost["imageUrl"] = postBodyContent;
-
-        } else if (newPostPropertyType === "videoUrl") {
-            newPost["videoUrl"] = postBodyContent.replace("watch?v=", "embed/");
-        }
-
-        postsServices.createNewPost(newPost, this.state.newPostType)
-            .then(response => {
-                return response.json()
-            })
+        postsServices.createNewPost(newPost, newPostType)
+            .then(response => response.json())
             .then(newPost => {
                 this.setState({ newPostType: null });
                 this.loadPosts();
+                this.setState({ selectedPostFilter: "allPosts" });
+            })
+            .catch(err => {
                 this.setState({
-                    selectedPostFilter: "allPosts"
+                    error: err.message,
                 });
-            })
-            .catch(message => {
-                console.log(message)
-                alert("Failed to create post.")
-            })
+            });
     }
 
-    handleClose = () => {
-        this.setState({
-            newPostType: null
-        });
-    }
+    handleClose = () => this.setState({ newPostType: null });
 
     render() {
+        const { filteredPosts, newPostType, selectedPostFilter } = this.state;
         return (
             <Fragment>
                 <div className="container">
                     <div className="row">
                         <div className="col s10">
-                            <FeedList posts={this.state.filteredPosts} />
+                            <FeedList posts={filteredPosts} />
                         </div>
                         <div className="col s2">
-                            <FilterPostsDropDown filterPosts={this.filterPosts} selectedPostFilter={this.state.selectedPostFilter}/>
-                            <CreatePostModal newPostType={this.state.newPostType} handleSubmit={this.handleSubmit} loadPosts={this.loadPosts} handleClose={this.handleClose} />
+                            <FilterPostsDropDown filterPosts={this.filterPosts} selectedPostFilter={selectedPostFilter} />
+                            <CreatePostModal 
+                            newPostType={newPostType} 
+                            handleSubmit={this.handleSubmit} 
+                            loadPosts={this.loadPosts} 
+                            handleClose={this.handleClose} 
+                            />
                             <CreatePostButton handlerPostType={this.handlerPostType} />
                         </div>
                     </div>
@@ -168,7 +149,6 @@ export class FeedPage extends Component {
             </Fragment>
         );
     }
-
 };
 
 

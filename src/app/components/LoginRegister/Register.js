@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { usersServices } from "../../../services/usersServices"
 import { validationService } from '../../../services/validationService';
+import PropTypes from 'prop-types';
 
 export class Register extends Component {
     constructor(props) {
@@ -13,15 +14,16 @@ export class Register extends Component {
             error: null,
             registerError: ""
         }
+        this.handleChange = this.handleChange.bind(this);
+        this.handleRegister = this.handleRegister.bind(this);
     }
 
-    handleChange = (event) => {
-        const field = event.target.name
+    handleChange(e) {
         this.setState({
-            [field]: event.target.value,
+            [e.target.name]: e.target.value,
             registerError: ""
         });
-        const valObj = validationService.validateRegisterForm(event.target.value, event.target.type)
+        const valObj = validationService.validateRegisterForm(e.target.value, e.target.type);
 
         if (valObj.error) {
             this.setState({ registerError: valObj.error });
@@ -29,28 +31,22 @@ export class Register extends Component {
         }
     }
 
-   
-    handleRegister = (event) => {
-        event.preventDefault()
-        const username = this.state.username;
-        const name = this.state.name;
-        const email = this.state.email;
-        const password = this.state.password;
+    handleRegister(e) {
+        e.preventDefault()
+        const { username, name, email, password, error } = this.state;
 
-        const newUserObj = {
-            username: username,
-            name: name,
-            email: email,
-            password: password
+        const newUserData = {
+            username,
+            name,
+            email,
+            password
         }
-        usersServices.registerUser(newUserObj)
-            .then(response => {
-                return response.json()
-            })
+        usersServices.registerUser(newUserData)
+            .then(response => response.json())
             .then(response => {
                 if (response.error) {
                     this.setState({ error: response.error.message })
-                } else if (!this.state.error) {
+                } else if (!error) {
                     this.props.onSuccessfulRegister();
                 }
             });
@@ -60,41 +56,43 @@ export class Register extends Component {
             name: "",
             email: "",
             password: ""
-        })
+        });
     }
 
     render() {
-        const { registerError } = this.state;
+        const { registerError, name, email, password, username } = this.state;
         return (
             <div className="row login-form">
                 <form className="col s12">
                     <div className="row">
                         <div className="input-field col s12">
-                            <input id="name" type="text" className="validate" name="name" value={this.state.name}  onChange={this.handleChange} />
-                            <label for="name">Full Name</label>
-                            {/* <p>{this.state.registerError}</p> */}
+                            <input id="name" type="text" className="validate" name="name" value={name} onChange={this.handleChange} />
+                            <label htmlFor="name">Full Name</label>
+                            <p>{registerError}</p>
                         </div>
                         <div className="input-field col s12">
-                            <input id="username" type="text" className="validate" name="username" value={this.state.username}  onChange={this.handleChange} />
-                            <label for="username">Username</label>
-                            
+                            <input id="username" type="text" className="validate" name="username" value={username} onChange={this.handleChange} />
+                            <label htmlFor="username">Username</label>
                         </div>
                         <div className="input-field col s12">
-                            <input id="email" type="email" className="validate" name="email" value={this.state.email}  onChange={this.handleChange} />
-                            <label for="email">Email</label>
+                            <input id="email" type="email" className="validate" name="email" value={email} onChange={this.handleChange} />
+                            <label htmlFor="email">Email</label>
                         </div>
 
                         <div className="input-field col s12">
-                            <input id="password" type="password" className="validate" name="password" value={this.state.password}  onChange={this.handleChange} />
-                            <label for="password">Password</label>
+                            <input id="password" type="password" className="validate" name="password" value={password} onChange={this.handleChange} />
+                            <label htmlFor="password">Password</label>
                         </div>
                         <div className="col s12">
-                            <a className="#e57373 red lighten-2 btn" disabled={registerError || !this.state.name || !this.state.username || !this.state.email || !this.state.password} onClick={this.handleRegister} type="submit" name="action">Register</a>
-                            {registerError && <p>{registerError}</p>}
+                            <a className="#e57373 red lighten-2 btn" disabled={registerError || !name || !username || !email || !password} onClick={this.handleRegister} type="submit" name="action">Register</a>
+                             <p>{ registerError && registerError}</p>
                         </div>
                     </div>
                 </form>
             </div>
-        )
+        );
     }
+}
+Register.propTypes = {
+    onSuccessfulRegister: PropTypes.func.isRequired
 }

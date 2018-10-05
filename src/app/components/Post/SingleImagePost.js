@@ -1,12 +1,16 @@
 import React from 'react';
-import feedPage from "../../../css/feedPage.css";
-import { postsServices } from "../../../services/postsServices"
+import "../../../css/feedPage.css";
+import { postsServices } from "../../../services/postsServices";
+import PropTypes from 'prop-types';
 
 export const SingleImagePost = (props) => {
 
+    const { id, userId } = props.post;
+    const loggedUserId = JSON.parse(localStorage.getItem("userId"));
+
     const onDelete = (event) => {
         event.preventDefault();
-        postsServices.deleteSinglePost(props.post.id)
+        postsServices.deleteSinglePost(id)
             .then(() => props.onDelete());
     }
 
@@ -19,8 +23,11 @@ export const SingleImagePost = (props) => {
                     </div>
                     <div className="card-action"></div>
                 </div>
-                <button className="comment-button" onClick={onDelete}>Delete</button>
+                {loggedUserId === userId && <button className="comment-button" onClick={onDelete}>Delete</button>}
             </div>
         </div>
     );
+}
+SingleImagePost.propTypes = {
+    post: PropTypes.object.isRequired
 }

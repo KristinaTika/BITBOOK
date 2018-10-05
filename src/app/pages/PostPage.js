@@ -6,13 +6,11 @@ import { SingleImagePost } from '../components/Post/SingleImagePost';
 import { SingleComment } from '../components/Post/SingleComment';
 import { commentsServices } from '../../services/commentsServices';
 import { usersServices } from '../../services/usersServices';
-import postPage from '../../css/postPage.css'
-import {Loader} from '../partials/Loader';
-
-
+import '../../css/postPage.css';
+import { Loader } from '../partials/Loader';
+import PropTypes from 'prop-types';
 
 export class PostPage extends Component {
-
     constructor(props) {
         super(props)
 
@@ -21,116 +19,103 @@ export class PostPage extends Component {
             comments: [],
             inputValue: "",
         }
+        this.loadSinglePost = this.loadSinglePost.bind(this);
+        this.loadComments = this.loadComments.bind(this);
+        this.displayPost = this.displayPost.bind(this);
+        this.onSuccessfulDelete = this.onSuccessfulDelete.bind(this);
+        this.loadNewComment = this.loadNewComment.bind(this);
     }
 
     componentDidMount() {
-        this.loadSinglePost(this.props.match.params.type, this.props.match.params.id);
-        this.loadComments(this.props.match.params.id);
-        this.setState({
-            postId: this.props.match.params.id
-        })   
+        const { id, type } = this.props.match.params;
+        this.loadSinglePost(type, id);
+        this.loadComments(id);
+        this.setState({ postId: id });
     }
 
-    loadSinglePost = (type, postId) => {
+    loadSinglePost(type, postId) {
         postsServices.fetchSinglePost(type, postId)
-            .then(post => {
-                this.setState({ post }); 
-            });
-        }
-        
-        loadComments = (commentId) => {
-            commentsServices.fetchComments(commentId)
-            .then(comments => {
-                this.setState({
-                    comments: comments
-                })
-            })
+            .then(post => this.setState({ post }));
     }
 
-    displayPost = () => {
-        switch (this.state.post.type) {
+    loadComments(commentId) {
+        commentsServices.fetchComments(commentId)
+            .then(comments => this.setState({ comments }));
+    }
+
+    displayPost() {
+        const { type } = this.state.post;
+        const { post } = this.state;
+        switch (type) {
             case 'text':
-                return <SingleTextPost post={this.state.post} onDelete={this.onSuccessfulDelete}  />
+                return <SingleTextPost post={post} onDelete={this.onSuccessfulDelete} />
             case 'image':
-                return <SingleImagePost post={this.state.post} onDelete={this.onSuccessfulDelete} />
+                return <SingleImagePost post={post} onDelete={this.onSuccessfulDelete} />
             case 'video':
-                return <SingleVideoPost post={this.state.post} onDelete={this.onSuccessfulDelete}  />
+                return <SingleVideoPost post={post} onDelete={this.onSuccessfulDelete} />
             default:
                 return <p>Invalid type of input</p>
         }
     }
 
-    onSuccessfulDelete = () => {
+    onSuccessfulDelete() {
         this.props.history.push("/feed");
     }
 
-    handleChange = (event) => {
-        event.preventDefault();
-        this.setState({
-            inputValue: event.target.value
-        });
+    handleChange = (e) => {
+        e.preventDefault();
+        this.setState({ inputValue: e.target.value });
     }
 
-    loadNewComment = (event) => {
+    loadNewComment(event) {
+        const { inputValue } = this.state;
+        const { id } = this.props.match.params;
         const comment = {
-            body: this.state.inputValue,
+            body: inputValue,
             postId: this.state.post.id,
         }
 
-        if (this.state.inputValue === "") {
+        if (inputValue === "") {
             event.preventDefault();
-
         } else {
             commentsServices.addComment(comment)
-                .then((response) => {
-                    return response.json()
-                })
+                .then(response => response.json())
                 .then(newPost => {
-                    this.loadComments(this.props.match.params.id)
-                    this.setState({
-                        inputValue: ''
-                    });
+                    this.loadComments(id)
+                    this.setState({inputValue: ''});
                 })
         }
     }
 
-
-
-
-
-
     render() {
-
-        if (!this.state.comments) {
+        const { comments, post, inputValue } = this.state;
+        if (!comments) {
             return <Loader />
         }
         return (
             <Fragment>
                 <div className="container">
-                    {this.state.post === null ? "" : this.displayPost()}
+                    {post === null ? "" : this.displayPost()}
                     <br />
                     <div className="row">
                         <div className="input-field">
-                            <input type="text" id="autocomplete-input" className="autocomplete col s11" placeholder='Add your comment' onChange={this.handleChange} value={this.state.inputValue} />
+                            <input type="text" id="autocomplete-input" className="autocomplete col s11" placeholder='Add your comment' onChange={this.handleChange} value={inputValue} />
                             <label htmlFor="autocomplete-input" ></label>
                             <div className='col s1'>
-                                <button className="btn waves-effect waves-light comment-button" type="submit" disabled={!this.state.inputValue} name="action" onClick={this.loadNewComment}>SEND</button>
+                                <button className="btn waves-effect waves-light comment-button" type="submit" disabled={!inputValue} name="action" onClick={this.loadNewComment}>SEND</button>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <ul className="collection">
-
-                            {this.state.comments.map((comment, key) => {
-                                return <SingleComment comment={comment} key={key} />
-                            })}
-
+                            {comments.map((comment, i) => <SingleComment comment={comment} key={i} />)}
                         </ul>
                     </div>
                 </div>
             </Fragment>
-        )
+        );
     }
-
-
+}
+PostPage.propTypes = {
+    history: PropTypes.object.isRequired
 }

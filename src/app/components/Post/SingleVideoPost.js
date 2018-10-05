@@ -1,12 +1,16 @@
 import React from 'react';
-import { postsServices } from "../../../services/postsServices"
+import { postsServices } from "../../../services/postsServices";
+import PropTypes from 'prop-types';
 
 export const SingleVideoPost = (props) => {
 
-    const onDelete = (event) => {
-        event.preventDefault();
-        postsServices.deleteSinglePost(props.post.id)
-            .then(() => props.onDelete());
+    const { id, userId } = props.post;
+    const loggedUserId = JSON.parse(localStorage.getItem("userId"));
+
+    const onDelete = (e) => {
+        e.preventDefault();
+        postsServices.deleteSinglePost(id)
+        .then(() => props.onDelete());
     }
 
     return (
@@ -21,7 +25,10 @@ export const SingleVideoPost = (props) => {
                     </div>
                 </div>
             </div>
-            <button className="comment-button" onClick={onDelete}>Delete</button>
+            { loggedUserId === userId && <button className="comment-button" onClick={onDelete}>Delete</button> }
         </div>
     );
+}
+SingleVideoPost.propTypes = {
+    post: PropTypes.object.isRequired
 }

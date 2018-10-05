@@ -12,14 +12,14 @@ class ValidationService {
         if (typeValue === 'imageUrl') {
             return this.validateImageForm(inputValue);
         } else if (typeValue === 'videoUrl') {
-            return this.validateVideoForm(inputValue);  
+            return this.validateVideoForm(inputValue);
         }
 
         return { valid: true };
     }
 
     hasValidPostType(typeValue) {
-        return ['text', 'imageUrl', 'videoUrl'].includes(typeValue);
+        return ['text', 'image', 'video'].includes(typeValue);
     }
 
     hasContent(inputValue) {
@@ -34,11 +34,9 @@ class ValidationService {
     }
 
     validateImageForm = (inputValue) => {
-        if ((inputValue.includes('http://')) && (inputValue.includes('jpg')) || (inputValue.includes('gif')) || (inputValue.includes('png')) || (inputValue.includes('bmp'))) {
-
+        if ((inputValue.includes('http://')) || (inputValue.includes('jpg')) || (inputValue.includes('gif')) || (inputValue.includes('png')) || (inputValue.includes('bmp'))) {
             return { valid: true };
         }
-
         return { error: "Upload valid image format." };
     }
 
@@ -58,8 +56,8 @@ class ValidationService {
 
     validatePasswordForm = (inputValue) => {
         const isNum = (inputValue) => {
-            for (let i = 0; i <inputValue.length; i++){
-                if(!isNaN(inputValue[i])){
+            for (let i = 0; i < inputValue.length; i++) {
+                if (!isNaN(inputValue[i])) {
                     return true;
                 }
             }
@@ -85,7 +83,6 @@ class ValidationService {
         }
         return { valid: true };
     }
-
 }
 
-export const validationService = new ValidationService;
+export const validationService = new ValidationService();

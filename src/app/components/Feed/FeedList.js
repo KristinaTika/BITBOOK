@@ -3,26 +3,25 @@ import { TextPost } from './TextPost';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Loader } from '../../partials/Loader'
-
-import M from "materialize-css"
-
+import PropTypes from 'prop-types';
 
 export const FeedList = (props) => {
+
+    const { posts } = props;
 
     return (
         <Fragment>
             <div className='container'>
-                {props.posts.length === 0
+                {posts.length === 0
                     ? <Loader />
-                    : (props.posts.map((post, key) => {
-
+                    : (posts.map((post, i) => {
                         switch (post.type) {
                             case 'text':
-                                return <TextPost post={post} key={key} />
+                                return <TextPost post={post} key={i} />
                             case 'image':
-                                return <ImagePost post={post} key={key} />
+                                return <ImagePost post={post} key={i} />
                             case 'video':
-                                return <VideoPost post={post} key={key} />;
+                                return <VideoPost post={post} key={i} />;
                             default:
                                 return <p>not valid type of input</p>
                         }
@@ -31,3 +30,6 @@ export const FeedList = (props) => {
         </Fragment>
     );
 };
+FeedList.propTypes = {
+    posts: PropTypes.arrayOf(PropTypes.object).isRequired
+}

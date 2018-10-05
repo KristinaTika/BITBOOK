@@ -4,7 +4,7 @@ class UploadServices {
 
     uploadUserPicture(imageFile) {
         const formData = new FormData();
-        formData.append('file', imageFile)
+        formData.append('file', imageFile);
 
         return fetch(photoUploadEndpoint, {
             body: formData,
@@ -14,9 +14,8 @@ class UploadServices {
             },
             method: 'POST'
         })
-            .then(response => response.json())
+            .then(response => response.json());
     }
-
 }
 
-export const uploadServices = new UploadServices;
+export const uploadServices = new UploadServices();

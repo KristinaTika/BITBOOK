@@ -2,9 +2,6 @@ import React, { Component, Fragment } from 'react';
 import { usersServices } from '../../services/usersServices';
 import '../../css/profilePage.css'
 import { EditProfileModal } from '../components/Profile/EditProfileModal';
-import M from "materialize-css";
-import { validationService } from '../../services/validationService';
-import { uploadServices } from '../../services/uploadServices';
 import { Loader } from '../partials/Loader';
 
 export class ProfilePage extends Component {
@@ -14,55 +11,49 @@ export class ProfilePage extends Component {
         this.state = {
             profile: null,
             showModal: false,
-
         }
+        this.loadProfile = this.loadProfile.bind(this);
+        this.updateUserProfile = this.updateUserProfile.bind(this);
+        this.handleOpenModal = this.handleOpenModal.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
         this.loadProfile();
     }
 
-    loadProfile = () => {
+    loadProfile() {
         usersServices.fetchProfile()
-            .then(response => {
-                this.setState({
-                    profile: response
-                });
-                // window.localStorage.setItem("userId", response.userId);
-            })
+            .then(response => this.setState({ profile: response }));
     }
 
-    updateUserProfile = (name, about, photo) => {
+    updateUserProfile(name, about, photo) {
         usersServices.updateUserProfile(name, about, photo)
-            .then(() => {
-                this.loadProfile();
-            });
+            .then(() => this.loadProfile());
     }
 
-    handleOpenModal = (event) => {
+    handleOpenModal(event) {
         event.preventDefault();
+        const { name, aboutShort } = this.state.profile;
         this.setState({
             showModal: true,
-            name: this.state.profile.name,
-            about: this.state.profile.aboutShort,
-            //photo: this.state.profile.avatarUrl
-        })
+            name: name,
+            about: aboutShort,
+        });
     }
 
-    handleClose = (event) => {
-        event.preventDefault();
+    handleClose = (e) => {
+        e.preventDefault();
         this.setState({
             showModal: false,
-            name: event.target.value,
-            about: event.target.value,
-            photo: event.target.value
-        })
-
+            name: e.target.value,
+            about: e.target.value,
+            photo: e.target.value
+        });
     }
 
-
     render() {
-        const profile = this.state.profile;
+        const { profile } = this.state;
 
         if (profile === null) {
             return <Loader />
@@ -73,13 +64,13 @@ export class ProfilePage extends Component {
                     <div className='col s12 center'>
                         <div className='row'>
                             {profile.avatarUrl === ""
-                                ? <img src="http://www.iglax.org/wp-content/uploads/2014/12/placeholder-Copy-11-1.png" className='responsive-img circle img' />
-                                : <img src={profile.avatarUrl} className='responsive-img circle img' />}
+                                ? <img src="http://www.iglax.org/wp-content/uploads/2014/12/placeholder-Copy-11-1.png" alt={profile.name} className='responsive-img circle img' />
+                                : <img src={profile.avatarUrl} className='responsive-img circle img' alt={profile.name} />
+                            }
                         </div>
                         <div className='row profile-name'>
                             <h4>{profile.name}</h4>
                         </div>
-
                         <EditProfileModal
                             showModal={this.state.showModal}
                             handleClose={this.handleClose}

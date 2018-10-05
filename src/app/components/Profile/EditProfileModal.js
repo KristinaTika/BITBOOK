@@ -1,16 +1,14 @@
-import React, { Component } from 'react';
-import App from '../../App.css';
-import '../../../css/profilePage.css'
-import { usersServices } from '../../../services/usersServices';
+import React from 'react';
+import '../../App.css';
+import '../../../css/profilePage.css';
 import { Form } from './Form';
-
+import PropTypes from 'prop-types';
 
 export const EditProfileModal = (props) => {
 
     if (!props.showModal) {
         return null;
     }
-
     return (
         <div className="overlay-modal">
             <div id="modalPost" className="modal open modal-style" style={{ display: 'block', top: 100 }}>
@@ -22,5 +20,10 @@ export const EditProfileModal = (props) => {
         </div>
     );
 }
-
+EditProfileModal.propTypes = {
+    showModal: PropTypes.bool.isRequired,
+    profile: PropTypes.object.isRequired,
+    updateUserProfile: PropTypes.func.isRequired,
+    handleClose: PropTypes.func.isRequired
+}
 

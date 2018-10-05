@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import feedPage from "../../../css/feedPage.css";
-
+import "../../../css/feedPage.css";
+import PropTypes from 'prop-types';
 
 export const ImagePost = (props) => {
 
-    const { type, id, imageUrl, commentsNum } = props.post
+    const { type, id, imageUrl, commentsNum } = props.post;
 
     return (
         <Link to={`/post/${type}/${id}`} className='post-color'>
@@ -25,3 +25,6 @@ export const ImagePost = (props) => {
         </Link>
     );
 };
+ImagePost.propTypes = {
+    post: PropTypes.object.isRequired
+}

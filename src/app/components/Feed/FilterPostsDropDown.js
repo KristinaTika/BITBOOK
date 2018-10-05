@@ -1,7 +1,7 @@
-import feedPage from "../../../css/feedPage.css";
+import "../../../css/feedPage.css";
 import React, { Component } from 'react';
 import M from "materialize-css";
-
+import PropTypes from 'prop-types';
 
 export class FilterPostsDropDown extends Component {
     constructor(props) {
@@ -18,9 +18,10 @@ export class FilterPostsDropDown extends Component {
     }
     
     render() {
+        const { filterPosts, selectedPostFilter } = this.props;
         return (
             <div className="selectFilteredPosts input-field col s12">
-                <select onChange={this.props.filterPosts} value={this.props.selectedPostFilter} ref={this.select} className="#e57373 red lighten-2">
+                <select onChange={filterPosts} value={selectedPostFilter} ref={this.select} className="#e57373 red lighten-2">
                     <option className="#e57373 red lighten-2" value="allPosts">All Posts</option>
                     <option value="videoUrl">Videos</option>
                     <option value="imageUrl">Images</option>
@@ -30,3 +31,7 @@ export class FilterPostsDropDown extends Component {
         )
     };
 };
+FilterPostsDropDown.propTypes = {
+    filterPosts: PropTypes.func.isRequired,
+    selectedPostFilter: PropTypes.string.isRequired
+}

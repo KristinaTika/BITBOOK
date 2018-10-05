@@ -1,24 +1,14 @@
 import React from "react";
+import '../../css/Loader.css';
 
-export const Loader = (props) => {
+export const Loader = () => {
     return (
-        <div className='loader-wrapper'>
-            <div className="loader-style">
-                <div className="preloader-wrapper big active">
-                    <div className="spinner-layer spinner-blue">
-                        <div className="circle-clipper left">
-                            <div className="circle"></div>
-                        </div>
-                        <div className="gap-patch">
-                            <div className="circle">
-                            </div>
-                        </div>
-                        <div className="circle-clipper right">
-                            <div className="circle"></div>
-                        </div>
-                    </div>
-                </div>
+        <div className="content">
+            <div className="loader_1">
+                <div className="fb"></div>
+                <div className="gplus"></div>
+                <div className="twt"></div>
             </div>
-        </div>
-    )
+	    </div>
+    );
 }

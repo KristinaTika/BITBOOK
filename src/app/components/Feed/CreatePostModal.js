@@ -1,38 +1,38 @@
 import React, { Component, Fragment } from 'react';
-import M from "materialize-css";
 import { validationService } from '../../../services/validationService';
-import '../../../css/profilePage.css'
-
+import '../../../css/profilePage.css';
+import PropTypes from 'prop-types';
 
 export class CreatePostModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
             inputValue: '',
-            //hideValidateMessage: "hideValidateMessage",
             error: null
         }
+        this.closeOnX = this.closeOnX.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.onCreate = this.onCreate.bind(this);
+        this.renderTextForm = this.renderTextForm.bind(this);
+        this.renderImageForm = this.renderImageForm.bind(this);
+        this.renderVideoForm = this.renderVideoForm.bind(this);
     }
 
-    closeOnX = (event) => {
-        this.props.handleClose()
+    closeOnX(e) {
+        this.props.handleClose();
         this.setState({
             inputValue: "",
-            //hideValidateMessage: "hideValidateMessage",
             error: null
-        })
+        });
     }
 
-    handleChange = (event) => {
+    handleChange(e) {
         this.setState({
-            inputValue: event.target.value,
+            inputValue: e.target.value,
             error: null
-
         });
 
-        // this.setState({ error: null });
-
-        const valObj = validationService.validatePost(event.target.value, this.props.newPostType)
+        const valObj = validationService.validatePost(e.target.value, this.props.newPostType);
 
         if (valObj.error) {
             this.setState({ error: valObj.error });
@@ -40,50 +40,53 @@ export class CreatePostModal extends Component {
         }
     };
 
-    onCreate = (event) => {
-        event.preventDefault();
-
-        this.props.handleSubmit(this.state.inputValue);
+    onCreate(e) {
+        e.preventDefault();
+        const { inputValue } = this.state;
+        this.props.handleSubmit(inputValue);
         this.setState({ inputValue: "" });
     }
 
-    renderTextForm = () => {
+    renderTextForm() {
+        const { inputValue } = this.state;
         return (
             <Fragment>
                 <h4>New  Post</h4>
                 <p>Post content</p>
-                <input id="post" type="text" name="newPost" className="validate" value={this.state.inputValue}
+                <input id="post" type="text" name="newPost" className="validate" value={inputValue}
                     onChange={this.handleChange} />
             </Fragment>
-        )
+        );
     }
 
-    renderImageForm = () => {
+    renderImageForm() {
+        const { inputValue } = this.state;
         return (
             <Fragment>
                 <h4>New Image Post</h4>
                 <p>Image link</p>
-                <input id="image" type="text" name="newImage" className="validate" value={this.state.inputValue}
+                <input id="image" type="text" name="newImage" className="validate" value={inputValue}
                     onChange={this.handleChange} />
             </Fragment>
-        )
+        );
     }
 
-    renderVideoForm = () => {
+    renderVideoForm() {
+        const { inputValue } = this.state;
         return (
             <Fragment>
                 <h4>New Video Post</h4>
                 <p>YouTube video link</p>
-                <input id="image" type="text" name="newVideo" className="validate" value={this.state.inputValue}
+                <input id="image" type="text" name="newVideo" className="validate" value={inputValue}
                     onChange={this.handleChange} />
             </Fragment>
-        )
+        );
     }
 
     render() {
-        const { error } = this.state;
-
-        if (!this.props.newPostType) {
+        const { error, inputValue } = this.state;
+        const { newPostType } = this.props;
+        if (!newPostType) {
             return null;
         }
         return (
@@ -92,18 +95,22 @@ export class CreatePostModal extends Component {
                     <div className="modal-content">
                         <i className="material-icons right modal-close" onClick={this.closeOnX} >close</i>
 
-                        {this.props.newPostType === 'text' && this.renderTextForm()}
-                        {this.props.newPostType === 'videoUrl' && this.renderVideoForm()}
-                        {this.props.newPostType === 'imageUrl' && this.renderImageForm()}
+                        {newPostType === 'text' && this.renderTextForm()}
+                        {newPostType === 'video' && this.renderVideoForm()}
+                        {newPostType === 'image' && this.renderImageForm()}
 
                         {error && <p>{error}</p>}
 
                     </div>
                         <div className="modal-footer">
-                            <a href="#!" className="modal-close waves-effect waves-green btn-flat comment-button" disabled={this.state.error || !this.state.inputValue} onClick={this.onCreate}>POST</a>
+                            <a href="#!" className="modal-close waves-effect waves-green btn-flat comment-button" disabled={error || !inputValue} onClick={this.onCreate}>POST</a>
                         </div>
                 </div>
             </div>
-        )
+        );
     }
 };
+CreatePostModal.propTypes = {
+    newPostType: PropTypes.string
+}
+

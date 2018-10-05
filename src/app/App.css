@@ -18,8 +18,7 @@ main {
   z-index: 10000000;
 }
 
-.hideValidateMessage,
-.hideLogout {
+.hideValidateMessage {
   display: none;
 }
 
@@ -34,9 +33,6 @@ main {
 .people-search {
   margin-top: 20px;
 }
-/* .fixed-action-btn {
-  right: 250px !important;
-} */
 
 .bitbook {
   font-size: 20px;

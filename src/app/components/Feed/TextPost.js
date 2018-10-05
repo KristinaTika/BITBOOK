@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import feedPage from "../../../css/feedPage.css";
-
+import "../../../css/feedPage.css";
+import PropTypes from 'prop-types';
 
 export const TextPost = (props) => {
 
-    const { text, type, id, commentsNum } = props.post
+    const { text, type, id, commentsNum } = props.post;
 
     return (
         <Link to={`/post/${type}/${id}`} className='post-color'>
@@ -25,3 +25,6 @@ export const TextPost = (props) => {
         </Link>
     );
 };
+TextPost.propTypes = {
+    post: PropTypes.object.isRequired
+}

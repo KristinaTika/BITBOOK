@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 export const SearchUsers = (props) => {
 
@@ -18,6 +19,10 @@ export const SearchUsers = (props) => {
                 </nav>
             </div>
         </div>
-
-    )
+    );
 } 
+SearchUsers.propTypes = {
+    searchInputValue: PropTypes.string,
+    handlerSearchUsers: PropTypes.func.isRequired,
+    closeSearch: PropTypes.func.isRequired
+}

@@ -1,0 +1,92 @@
+.content{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	height: 100%;
+}
+
+.loader_1 {
+	position:relative;
+	width: 50px;
+	height: 50px;
+	margin:50px 0;
+}
+
+.twt{
+	left:-50px;
+	position:absolute;
+	width: 50px;
+	height: 50px;
+	background:#00aced;
+	border-radius:30px;
+	transform:scale(.8);
+	animation: twt 2s infinite;
+	background: lightblue;
+}
+
+.fb{
+	left:50px;
+	position:absolute;
+	width: 50px;
+	height: 50px;
+	background:#3b5999;
+	border-radius:30px;
+	transform:scale(.8);
+	animation: fb 2s infinite;
+	background: red;
+}
+
+.gplus{
+	position:absolute;
+	width:50px;
+	height: 50px;
+	background:#dd4b39;
+	border-radius:30px;
+	animation: gplus 2s infinite;
+	background: yellow;
+}
+  
+@keyframes fb {
+    0% { 
+        left:50px; transform:scale(.8); z-index:1;
+    }
+    33% { 
+        left:-50px; transform:scale(.8); z-index:2;
+    }
+    66% {
+        left:0px; transform:scale(1); z-index:1;
+    }
+    100% {
+        left:50px; transform:scale(.8); z-index:1;
+    }
+}
+  
+@keyframes gplus {
+    0% { 
+        left:0px; transform:scale(1); z-index:2;
+    }
+    33% { 
+        left:50px; transform:scale(.8); z-index:1;
+    }
+    66% { 
+        left:-50px; transform:scale(.8); z-index:0;
+    }
+    100% {
+        left:0px; transform:scale(1); z-index:2;
+    }
+}
+  
+@keyframes twt {
+    0% { 
+        left:-50px; transform:scale(.8); z-index:0;
+    }
+    33% {
+        left:0px; transform:scale(1); z-index:3;
+    }
+    66% { 
+        left:50px; transform:scale(.8); z-index:1;
+    }
+    100% { 
+        left:-50px; transform:scale(.8); z-index:0;
+    }
+}
