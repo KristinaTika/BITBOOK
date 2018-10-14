@@ -5,7 +5,6 @@ import { SingleVideoPost } from '../components/Post/SingleVideoPost';
 import { SingleImagePost } from '../components/Post/SingleImagePost';
 import { SingleComment } from '../components/Post/SingleComment';
 import { commentsServices } from '../../services/commentsServices';
-import { usersServices } from '../../services/usersServices';
 import '../../css/postPage.css';
 import { Loader } from '../partials/Loader';
 import PropTypes from 'prop-types';

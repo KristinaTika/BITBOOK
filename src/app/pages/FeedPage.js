@@ -3,9 +3,7 @@ import { postsServices } from '../../services/postsServices';
 import { FeedList } from '../components/Feed/FeedList';
 import { CreatePostButton } from '../components/Feed/CreatePostButton';
 import { CreatePostModal } from "../components/Feed/CreatePostModal";
-import { TextPost } from '../../entities/Post';
 import { FilterPostsDropDown } from "../components/Feed/FilterPostsDropDown"
-import { usersServices } from '../../services/usersServices';
 
 export class FeedPage extends Component {
     constructor(props) {

@@ -8,7 +8,7 @@ export const Header = () => {
 
     document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.sidenav');
-        var instances = M.Sidenav.init(elems);
+        M.Sidenav.init(elems);
     });
 
     const logoutHandler = (e) => {
@@ -29,7 +29,7 @@ export const Header = () => {
                             <li><Link to='/feed'>Feed</Link></li>
                             <li><Link to='/people'>People</Link></li>
                             <li><Link to='/profile'>Profile</Link></li>
-                            <li><a href="" onClick={logoutHandler} >Logout</a></li> 
+                            <li><a href="" onClick={logoutHandler} >Logout </a></li> 
                         </ul>
                     </div>
                 </div>
@@ -39,6 +39,7 @@ export const Header = () => {
                 <li><Link to='/feed'>Feed</Link></li>
                 <li><Link to='/people'>People</Link></li>
                 <li><Link to='/profile'>Profile</Link></li>
+                <li><a href="" onClick={logoutHandler} >Logout</a></li> 
             </ul>
         </header>
     );

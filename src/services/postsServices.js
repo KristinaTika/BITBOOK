@@ -6,9 +6,7 @@ class PostsServices {
 
     fetchPosts() {
         return get(postEndpoint)
-            .then(postList => {
-                return postList.filter(post => post.videoUrl ? post.videoUrl.includes("youtube") : true);    
-            })
+            .then(postList => postList.filter(post => post.videoUrl ? post.videoUrl.includes("youtube") : true))
             .then(myPostList => {
                 return myPostList.map(post => {
                     switch (post.type) {
@@ -17,9 +15,9 @@ class PostsServices {
                         case 'image':
                             return new ImagePost(post.id, post.date, post.userId, post.userDisplayName, post.type, post.commentsNum, post.imageUrl);
                         case 'video':
-                            return new VideoPost(post.id, post.date, post.userId, post.userDisplayName, post.type, post.commentsNum, post.videoUrl)  ;  
+                            return new VideoPost(post.id, post.date, post.userId, post.userDisplayName, post.type, post.commentsNum, post.videoUrl);
                         default:
-                            return "";  
+                            return "";
                     }
                 });
             });
@@ -41,19 +39,17 @@ class PostsServices {
     }
 };
 
-const  typeUrl = (type) => {
-    let url = '';
+const typeUrl = (type) => {
     switch (type) {
         case 'text':
-            return url = `${baseEndpoint}/TextPosts`;
+            return `${baseEndpoint}/TextPosts`;
         case 'image':
-            return url = `${baseEndpoint}/ImagePosts`;
+            return `${baseEndpoint}/ImagePosts`;
         case 'video':
-            return url = `${baseEndpoint}/VideoPosts`;
+            return `${baseEndpoint}/VideoPosts`;
         default:
-            return '...'
+            return '...';
     }
-    // return url;
 }
 
 export const postsServices = new PostsServices();

@@ -19,7 +19,7 @@ export const SingleVideoPost = (props) => {
                 <div className="col s12">
                     <div className="card">
                         <div className="card-video video-container">
-                            <iframe width='100%' height='300' src={props.post.videoUrl} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen></iframe>
+                            <iframe width='100%' height='300' src={props.post.videoUrl} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen title={id}></iframe>
                         </div>
                         <div className="card-action"></div>
                     </div>
